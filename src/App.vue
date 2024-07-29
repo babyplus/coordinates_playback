@@ -1,17 +1,22 @@
 <template>
+<div style="display: flex">
+  <DataSheet />
   <MapComponent />
+</div>
   <HelloWorld msg="Welcome to Your Vue.js App"/>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 import MapComponent from './components/MapComponent.vue'
+import DataSheet from './components/DataSheet.vue'
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
-    MapComponent
+    MapComponent,
+    DataSheet
   }
 }
 </script>

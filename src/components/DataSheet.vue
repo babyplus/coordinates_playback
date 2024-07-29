@@ -1,64 +1,22 @@
 <template>
-  <div id="app" class="container">
+  <div id="datasheet"  class="container">
     <div>
-      <div id="mapid"></div>
+        <fwb-list-group>
+        <fwb-list-group-item v-for="(item, index) in markers.slice(5,15)" :key="index">{{ item.info.coordinate }}</fwb-list-group-item>
+        </fwb-list-group>
     </div>
   </div>
 </template>
 
-<style scoped>
-#mapid { 
-    height: 70vh;
-    width:  85vw;
-}
-</style>
+<script setup>
+import { FwbListGroup, FwbListGroupItem } from 'flowbite-vue';
+</script>
 
 <script>
-import * as L from 'leaflet';
-import "leaflet/dist/leaflet.css";
-
-function sleep(ms){
-    return new Promise(r=>setTimeout(r, ms))
-}
-
-async function playback(that){
-    var tileLayer = that.tileLayer;
-    var mapid = that.mapid;
-    var markerIndex = that.markerIndex;
-    var markers = that.markers;
-    var zoom = that.zoom;
-    var map = L.map(mapid).setView(markers[0].info.coordinate, zoom);
-    L.tileLayer(tileLayer, {
-        maxZoom: 19,
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
-    for (var i = markerIndex; i < markers.length; i++) {
-        var coordinate = markers[i].info.coordinate;
-        var description = markers[i].info.description;
-        await track(coordinate, map, description);
-    }
-}
-
-async function track(c, m, desc){
-    var marker = L.marker(c).addTo(m);
-    marker.bindPopup(desc).openPopup();
-    m.setView(c, 19);
-    marker.setIcon(L.icon({iconUrl: 'marker-icon-2x.png',iconSize: [38, 95], shadowUrl: 'marker-icon-2x.png', shadowSize: [38, 95]}));
-    await sleep(2000);
-    marker.remove();
-}
-
-
 export default {
-  mounted() {
-    playback(this);
-  },
+  name: 'DataSheet',
   data() {
     return {
-        tileLayer: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-        mapid: "mapid",
-        zoom: 19,
-        markerIndex: 0,
         markers: [
             {info: {coordinate: [23.308434503365063,113.21329057216644],description: "<b>Hello world 1!</b><br>I am a popup."}},
             {info: {coordinate: [23.308534503365063,113.21329057216644],description: "<b>Hello world 2!</b><br>I am a popup."}},
@@ -163,5 +121,11 @@ export default {
         ]
     }
   }
-};
+}
 </script>
+
+<style scoped>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+</style>
