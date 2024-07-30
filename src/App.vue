@@ -3,20 +3,23 @@
   <DataSheet />
   <MapComponent />
 </div>
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+<SettingComponent />
+<HelloWorld msg="Welcome to Your Vue.js App"/>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
 import MapComponent from './components/MapComponent.vue'
 import DataSheet from './components/DataSheet.vue'
+import SettingComponent from './components/SettingComponent.vue'
 
 export default {
   name: 'App',
   components: {
     HelloWorld,
     MapComponent,
-    DataSheet
+    DataSheet,
+    SettingComponent
   }
 }
 </script>
