@@ -1,5 +1,5 @@
 <template>
-    <div id="app" class="container">
+    <div id="map" class="container">
         <div>
             <div id="mapid"></div>
         </div>

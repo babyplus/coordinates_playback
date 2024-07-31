@@ -1,5 +1,5 @@
 <template>
-<div style="display: flex">
+<div style="display: flex;   margin-bottom: 20px;">
   <DataSheet />
   <MapComponent />
 </div>
@@ -36,6 +36,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 20px;
 }
 </style>

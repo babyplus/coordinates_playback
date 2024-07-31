@@ -1,14 +1,14 @@
 <template>
-    <fwb-button @click="playback()" color="default" outline>Playback</fwb-button>
-    <fwb-button @click="pause()" color="purple" outline>Pause</fwb-button>
-    <fwb-button @click="stop()" color="red" outline>Stop</fwb-button>
-    <fwb-button @click="reset()" color="dark" outline>Reset</fwb-button>
-    <fwb-button @click="zoom_mod(1)" color="green" outline>zoom+</fwb-button>
-    <fwb-button @click="zoom_mod(-1)" color="green" outline>zoom-</fwb-button>
-    <fwb-button @click="speed(10)" color="yellow" outline>10X</fwb-button>
-    <fwb-button @click="speed(20)" color="yellow" outline>20X</fwb-button>
-    <fwb-button @click="speed(50)" color="yellow" outline>50X</fwb-button>
-    <fwb-button @click="speed(100)" color="yellow" outline>100X</fwb-button>
+    <fwb-button class="margin5px" @click="playback()" color="default" outline>Playback</fwb-button>
+    <fwb-button class="margin5px" @click="pause()" color="purple" outline>Pause</fwb-button>
+    <fwb-button class="margin5px" @click="stop()" color="red" outline>Stop</fwb-button>
+    <fwb-button class="margin5px" @click="reset()" color="dark" outline>Reset</fwb-button>
+    <fwb-button class="margin5px" @click="zoom_mod(1)" color="green" outline>zoom+</fwb-button>
+    <fwb-button class="margin5px" @click="zoom_mod(-1)" color="green" outline>zoom-</fwb-button>
+    <fwb-button class="margin5px" @click="speed(10)" color="yellow" outline>10X</fwb-button>
+    <fwb-button class="margin5px" @click="speed(20)" color="yellow" outline>20X</fwb-button>
+    <fwb-button class="margin5px" @click="speed(50)" color="yellow" outline>50X</fwb-button>
+    <fwb-button class="margin5px" @click="speed(100)" color="yellow" outline>100X</fwb-button>
 </template>
 
 <script setup>
@@ -53,7 +53,5 @@ function reset(){
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-#setting{
-    display: flex
-}
+.margin5px {margin: 5px}
 </style>
