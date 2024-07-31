@@ -3,7 +3,10 @@
   <DataSheet />
   <MapComponent />
 </div>
-<SettingComponent />
+<div style="display: flex">
+  <SettingComponent />
+  <ButtonComponent />
+</div>
 <HelloWorld msg="Welcome to Your Vue.js App"/>
 </template>
 
@@ -12,6 +15,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import MapComponent from './components/MapComponent.vue'
 import DataSheet from './components/DataSheet.vue'
 import SettingComponent from './components/SettingComponent.vue'
+import ButtonComponent from './components/ButtonComponent.vue'
 
 export default {
   name: 'App',
@@ -19,7 +23,8 @@ export default {
     HelloWorld,
     MapComponent,
     DataSheet,
-    SettingComponent
+    SettingComponent,
+    ButtonComponent
   }
 }
 </script>

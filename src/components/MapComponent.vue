@@ -8,15 +8,17 @@
 
 <style scoped>
 #mapid { 
-    height: 70vh;
+    height: 80vh;
     width:  85vw;
 }
 </style>
 
 <script>
+import { watch } from 'vue';
 import * as L from 'leaflet';
 import "leaflet/dist/leaflet.css";
 import store from "@/store.js";
+import { INIT } from "@/values.js"
 
 function sleep(ms){
     return new Promise(r=>setTimeout(r, ms))
@@ -25,37 +27,51 @@ function sleep(ms){
 function createMap(that){
     var tileLayer = that.tileLayer;
     var mapid = that.mapid;
-    var zoom = store.state.zoom;
-    var map = L.map(mapid).setView([23.308434503365063,113.21329057216644], zoom);
+    var zoom = INIT.init_zoom;
+    var coordinate = INIT.init_coordinate;
+    var map = L.map(mapid, {zoomAnimation:false}).setView(coordinate, zoom);
     L.tileLayer(tileLayer, {
         maxZoom: 19
     }).addTo(map);
     that.map = map;
 }
 
-async function playbacks(that){
-    await playback(that);
-    store.state.markers_index = 0;
-    await playback(that);
-}
-
 async function playback(that){
+    if ( true == store.state.playing ) return;
+    store.state.stop = false;
+    store.state.pause = false;
+    store.state.playing = true;
     var markers_index = store.state.markers_index;
     var markers_list = that.markers_list;
-    that.timestamp = markers_list[markers_index]["timestamp"];
+    if  ( markers_list.length > 0 ) {
+        that.timestamp = markers_list[markers_index]["timestamp"];
+        var ms = markers_list[markers_index]["markers"];
+        for (var m in ms) {
+            that.map.setView(ms[m]["coordinate"], store.state.zoom);
+            break;
+        }
+    }
     for (var i = markers_index; i < markers_list.length; i++) {
+        if ( true == store.state.pause ) store.state.markers_index = i;
+        if ( true == store.state.stop ) store.state.markers_index = 0;
+        if ( true == store.state.pause || true == store.state.stop ) {
+            store.state.playing = false;
+            return;
+        }
         var timestamp = markers_list[i]["timestamp"];
         var markers = markers_list[i]["markers"];
         var await_time = (timestamp - that.timestamp) * store.state.interval;
         await track(that, await_time, markers);
         that.timestamp = timestamp;
     }
+    store.state.playing = false;
 }
 
 async function track(that, await_time, markers){
     var map = that.map;
     await sleep(await_time);
     for (const key in markers) {
+        if ( true == store.state.pause || true == store.state.stop) break;
         if (undefined != that.marker_objects[key]){
             console.log("Remove the old marker.")
             that.marker_objects[key].remove();
@@ -75,8 +91,9 @@ async function track(that, await_time, markers){
 
 export default {
     mounted() {
+        var that = this;
         createMap(this);
-        playbacks(this);
+        watch(() => store.state.play, () => {playback(that);});
     },
     data() {
         return {
