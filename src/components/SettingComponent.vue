@@ -33,13 +33,9 @@ import { FwbInput } from 'flowbite-vue';
 </script>
 
 <style scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 #setting{
     display: flex;
     margin-left: 10px;
     margin-right: 20px;
 }
-.margin_right5px{margin-right: 5px}
 </style>

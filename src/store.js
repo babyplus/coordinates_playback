@@ -11,6 +11,8 @@ state() {
         zoom: INIT.zoom,
         interval: INIT.interval,
         selected: INIT.selected,
+        current_timestamp: 0,
+        current_coordinate: [],
         markers_index: INIT.markers_index,
         markers_list_str: JSON.stringify([
             {"timestamp":1722398722,"markers":{"a":{"coordinate":[23.1167395503137,113.30694794654846],"description":"a1"},"b":{"coordinate":[23.1167395503137,113.30694794654846],"description":"b1"}}},

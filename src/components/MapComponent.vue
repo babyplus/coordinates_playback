@@ -51,7 +51,10 @@ async function playback(that){
             break;
         }
     }
+
+    var skip = 0;
     for (var i = markers_index; i < markers_list.length; i++) {
+        store.state.current_markers_index = i;
         if ( true == store.state.pause ) store.state.markers_index = i;
         if ( true == store.state.stop ) store.state.markers_index = 0;
         if ( true == store.state.pause || true == store.state.stop ) {
@@ -61,8 +64,20 @@ async function playback(that){
         var timestamp = markers_list[i]["timestamp"];
         var markers = markers_list[i]["markers"];
         var await_time = (timestamp - that.timestamp) * store.state.interval;
+        // Some data should be skipped if the wait time is less than 1 second.
+        skip += await_time;
+        if (skip < 1000) {
+            var current_keys = Object.keys(markers);
+            for (var current_key in current_keys){
+                if (!(current_key in that.marker_objects)) {
+                    continue;
+                }
+            }
+        }
+        skip = 0;
         await track(that, await_time, markers);
         that.timestamp = timestamp;
+        store.state.current_timestamp = timestamp;
     }
     store.state.playing = false;
 }
@@ -83,7 +98,7 @@ async function track(that, await_time, markers){
         if (store.state.selected == key){
             marker.openPopup();
             map.setView(coordinate, store.state.zoom);
-        }
+        } else map.setView(map.getCenter(), store.state.zoom);
         marker.setIcon(L.icon({iconUrl: 'marker-icon-2x.png',iconSize: [38, 95], shadowUrl: 'marker-icon-2x.png', shadowSize: [38, 95]}));
         that.marker_objects[key] = marker;
     }
@@ -93,7 +108,12 @@ export default {
     mounted() {
         var that = this;
         createMap(this);
-        watch(() => store.state.play, () => {playback(that);});
+        watch(() => store.state.play, () => {
+            playback(that);
+        });
+        watch(() => store.state.zoom, (z) => {
+            if(false==store.state.playing) that.map.setView(that.map.getCenter(),z);
+        });
     },
     data() {
         return {
@@ -107,7 +127,13 @@ export default {
     computed: {
         markers_list: {
             get() {
-                return JSON.parse(store.state.markers_list_str);
+                try{
+                    var json = JSON.parse(store.state.markers_list_str);
+                    return json;
+                } catch { 
+                    alert("Parsing failed, please check the format of the json string.");
+                    return [];
+                }
             }
         }
     }

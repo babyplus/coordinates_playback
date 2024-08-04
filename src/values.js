@@ -4,7 +4,8 @@ const INIT = {
     zoom: 16,
     interval: 10,
     selected: "",
-    markers_index: 0
+    markers_index: 0,
+    current_marker_index: 0
 };
 
 export { INIT };

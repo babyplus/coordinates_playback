@@ -5,10 +5,12 @@
     <fwb-button class="margin5px" @click="reset()" color="dark" outline>Reset</fwb-button>
     <fwb-button class="margin5px" @click="zoom_mod(1)" color="green" outline>zoom+</fwb-button>
     <fwb-button class="margin5px" @click="zoom_mod(-1)" color="green" outline>zoom-</fwb-button>
+    <fwb-button class="margin5px" @click="speed(1)" color="yellow" outline>1X</fwb-button>
     <fwb-button class="margin5px" @click="speed(10)" color="yellow" outline>10X</fwb-button>
     <fwb-button class="margin5px" @click="speed(20)" color="yellow" outline>20X</fwb-button>
     <fwb-button class="margin5px" @click="speed(50)" color="yellow" outline>50X</fwb-button>
     <fwb-button class="margin5px" @click="speed(100)" color="yellow" outline>100X</fwb-button>
+    <fwb-button class="margin5px" @click="speed(500)" color="yellow" outline>500X</fwb-button>
 </template>
 
 <script setup>
@@ -48,10 +50,3 @@ function reset(){
 }
 
 </script>
-
-<style scoped>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-.margin5px {margin: 5px}
-</style>
