@@ -1,7 +1,8 @@
 <template>
 <div style="display: flex;" class="margin_bottom20px">
-  <div class="margin_right20px">
+  <div class="side_bar margin_right20px margin_left10px">
     <DataSheet />
+    <CustomHooks />
     <MonitorComponent />
   </div>
   <MapComponent />
@@ -18,6 +19,7 @@ import DataSheet from './components/DataSheet.vue';
 import SettingComponent from './components/SettingComponent.vue';
 import ButtonComponent from './components/ButtonComponent.vue';
 import MonitorComponent from './components/MonitorComponent.vue';
+import CustomHooks from './components/CustomHooks.vue';
 
 export default {
   name: 'App',
@@ -26,7 +28,8 @@ export default {
     DataSheet,
     SettingComponent,
     ButtonComponent,
-    MonitorComponent
+    MonitorComponent,
+    CustomHooks
   }
 }
 </script>
@@ -45,6 +48,12 @@ export default {
 }
 .margin_bottom20px {margin-bottom: 20px}
 .margin_right5px{margin-right: 5px}
+.margin_left10px{margin-left: 10px}
 .margin_right20px{margin-right: 20px}
 .margin5px {margin: 5px}
+.side_bar{
+  margin-right: 20px;
+  max-width: 15vw;
+  width: 15vw
+}
 </style>

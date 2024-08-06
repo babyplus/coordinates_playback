@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <fwb-textarea
-        v-model="$store.state.markers_list_str"
+        v-model="$store.state.custom_hooks_str"
         :rows="10"
         label=""
         placeholder="Write your data..."
@@ -15,6 +15,6 @@ import { FwbTextarea } from 'flowbite-vue';
 
 <script>
 export default {
-  name: 'DataSheet'
+  name: 'CustomHooks'
 }
 </script>

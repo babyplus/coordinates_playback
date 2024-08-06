@@ -1,8 +1,8 @@
 <template>
-  <fwb-list-group :style="display">
-    <fwb-list-group-item>{{ $store.state.current_markers_index }}</fwb-list-group-item>
-    <fwb-list-group-item>{{ current_date }}</fwb-list-group-item>
-  </fwb-list-group>
+    <fwb-list-group :style="display">
+        <fwb-list-group-item>{{ $store.state.current_markers_index }}</fwb-list-group-item>
+        <fwb-list-group-item>{{ current_date }}</fwb-list-group-item>
+    </fwb-list-group>
 </template>
 
 <script setup>
