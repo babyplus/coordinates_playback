@@ -79,6 +79,8 @@ async function playback(that){
         var timestamp = markers_list[i]["timestamp"];
         var markers = markers_list[i]["markers"];
         var await_time = (timestamp - that.timestamp) * store.state.interval;
+        that.timestamp = timestamp;
+
 
         // Certain data should be omitted if the waiting time is less than 1 second.
         total_await_time += await_time;
@@ -92,13 +94,12 @@ async function playback(that){
         }
         total_await_time = 0;
 
+        // Record the current timestamp for monitor or other usage.(TODO: Change to list structure)
+        store.state.current_timestamp = timestamp;
+
         // Tracking all markers of this moment.
         await track(that, await_time, markers);
 
-        that.timestamp = timestamp;
-
-        // Record the current timestamp for monitor or other usage.(TODO: Change to list structure)
-        store.state.current_timestamp = timestamp;
     }
     store.state.playing = false;
 }
@@ -124,8 +125,14 @@ async function track(that, await_time, markers){
         // Add the marker.
         var coordinate = markers[key]["coordinate"];
         var description = markers[key]["description"];
-        var marker = L.marker(coordinate).addTo(map);
+        if (undefined == coordinate) {
+            alert("Warnning: Undefined coordinate (" + that.timestamp + ": " + key + "), check JSON string data.");
+            continue;
+        }
+        var marker = undefined; 
+        marker = L.marker(coordinate).addTo(map);
         marker.bindPopup(description);
+        that.marker_objects[key] = marker;
         
         // Parses the custom hooks and executes the specified actions if required.
         var data = markers[key]["data"];
@@ -138,7 +145,6 @@ async function track(that, await_time, markers){
         } else map.setView(map.getCenter(), store.state.zoom);
 
         marker.setIcon(L.icon({iconUrl: 'marker-icon-2x.png',iconSize: [38, 95], shadowUrl: 'marker-icon-2x.png', shadowSize: [38, 95]}));
-        that.marker_objects[key] = marker;
     }
 }
 
@@ -159,7 +165,7 @@ function match_or_not(matching_unit, threshold, comparative){
         default:
             alert("Warnning: undefined matching_unit(" + matching_unit + ")");
     }
-    return true;
+    return false;
 }
 
 function exec_actions(that, actions){
@@ -216,20 +222,30 @@ function exec_actions(that, actions){
 }
 
 function parses_and_exec_actions(that, data){
+    if (undefined == data) return;
     for (var i in that.custom_hooks){
         var conditions = that.custom_hooks[i]["conditions"];
         var actions = that.custom_hooks[i]["actions"];
+
+        // The variable "matched" is assigned the value true only when all conditions are satisfied; otherwise, it is assigned the value false.
         var matched = true;
         for (var n in conditions){
             for (var matching_unit in conditions[n]){
                 var condition = conditions[n][matching_unit];
                 var threshold = condition[0];
-                var comparative = data[condition[1]];
+                var keyword = condition[1];
+                if ( ! ( keyword in data ) ) {
+                    matched = false;
+                    break;
+                }
+                var comparative = data[keyword];
                 matched = match_or_not(matching_unit, threshold, comparative)
                 if ( false == matched )
                     break;
             }
         }
+
+        // Execute the actions if the variable "matched" is assigned the value true.
         if ( true == matched )
             exec_actions(that, actions);
     }
