@@ -44,6 +44,9 @@ async function playback(that){
     store.state.stop = false;
     store.state.pause = false;
     store.state.playing = true;
+    for (var ob in store.state.marker_objects)
+        store.state.marker_objects[ob]["object"].remove();
+    store.state.marker_objects = {};
 
     // Specify the position to start playing.
     var markers_index = store.state.markers_index;
@@ -61,7 +64,6 @@ async function playback(that){
     }
 
     // Iterate through the dataset and track each moment.
-    var total_await_time = 0;
     for (var i = markers_index; i < markers_list.length; i++) {
 
         // Record the current index for monitor or other usage.(TODO: Change to list structure)
@@ -80,19 +82,6 @@ async function playback(that){
         var markers = markers_list[i]["markers"];
         var await_time = (timestamp - that.timestamp) * store.state.interval;
         that.timestamp = timestamp;
-
-
-        // Certain data should be omitted if the waiting time is less than 1 second.
-        total_await_time += await_time;
-        if (total_await_time < 1000) {
-            var current_keys = Object.keys(markers);
-            for (var current_key in current_keys){
-                if (!(current_key in that.marker_objects)) {
-                    continue;
-                }
-            }
-        }
-        total_await_time = 0;
 
         // Record the current timestamp for monitor or other usage.(TODO: Change to list structure)
         store.state.current_timestamp = timestamp;
@@ -116,8 +105,10 @@ async function track(that, await_time, markers){
         if ( true == store.state.pause || true == store.state.stop) break;
 
         // Remove the old marker if it exists.
-        if (undefined != that.marker_objects[key])
-            that.marker_objects[key].remove();
+        if (undefined == store.state.marker_objects[key])
+            store.state.marker_objects[key] = {};
+        if (undefined != store.state.marker_objects[key]["object"])
+            store.state.marker_objects[key]["object"].remove();
 
         // Record the current key.
         store.state.current_key = key;
@@ -132,7 +123,7 @@ async function track(that, await_time, markers){
         var marker = undefined; 
         marker = L.marker(coordinate).addTo(map);
         marker.bindPopup(description);
-        that.marker_objects[key] = marker;
+        store.state.marker_objects[key]["object"] = marker;
         
         // Parses the custom hooks and executes the specified actions if required.
         var data = markers[key]["data"];
@@ -148,32 +139,53 @@ async function track(that, await_time, markers){
     }
 }
 
-function match_or_not(matching_unit, threshold, comparative){
+function match_or_not(that, data, matching_unit, condition){
     switch(matching_unit){
         case "EQ":
-            return (threshold == comparative) ? true : false;
+            return (data[condition[0]] == condition[1]);
         case "NE":
-            return (threshold != comparative) ? true : false;
+            return (data[condition[0]] != condition[1]);
         case "LT":
-            return (threshold < comparative) ? true : false;
+            return (data[condition[0]] < condition[1]);
         case "LE":
-            return (threshold <= comparative) ? true : false;
+            return (data[condition[0]] <= condition[1]);
         case "GT":
-            return (threshold > comparative) ? true : false;
+            return (data[condition[0]] > condition[1]);
         case "GE":
-            return (threshold >= comparative) ? true : false;
+            return (data[condition[0]] >= condition[1]);
+        case "CHANGED":
+            var keyword = condition[0];
+            if (undefined == store.state.marker_objects[store.state.current_key]["values"])
+                store.state.marker_objects[store.state.current_key]["values"] = {};
+            if (undefined == store.state.marker_objects[store.state.current_key]["values"][keyword])
+                store.state.marker_objects[store.state.current_key]["values"][keyword] = data[keyword];
+            if (store.state.marker_objects[store.state.current_key]["values"][keyword] != data[keyword]){
+                store.state.marker_objects[store.state.current_key]["values"][keyword] = data[keyword];
+                return true;
+            }
+            break;
         default:
             alert("Warnning: undefined matching_unit(" + matching_unit + ")");
     }
     return false;
 }
 
-function exec_actions(that, actions){
+function exec_actions(that, actions, data){
     for (var i in actions) {
         switch(actions[i]){
             // Employ strict matching criteria for keyword processing initially.
             case "selected":
                 store.state.selected = store.state.current_key;
+                break;
+            case "no_selected":
+                store.state.selected = "";
+                break;
+            case "record":
+                var record = that.current_date + " " + store.state.current_key + ":" + JSON.stringify(data) + "\n";
+                store.state.action_records += record;
+                break;
+            case "alert":
+                alert(JSON.stringify(data));
                 break;
 
             // Employs regular expressions for keyword matching.
@@ -232,22 +244,22 @@ function parses_and_exec_actions(that, data){
         for (var n in conditions){
             for (var matching_unit in conditions[n]){
                 var condition = conditions[n][matching_unit];
-                var threshold = condition[0];
-                var keyword = condition[1];
+                var keyword = condition[0];
                 if ( ! ( keyword in data ) ) {
                     matched = false;
                     break;
                 }
-                var comparative = data[keyword];
-                matched = match_or_not(matching_unit, threshold, comparative)
+                matched = match_or_not(that, data, matching_unit, condition);
                 if ( false == matched )
                     break;
             }
+            if ( false == matched )
+            break;
         }
 
         // Execute the actions if the variable "matched" is assigned the value true.
         if ( true == matched )
-            exec_actions(that, actions);
+            exec_actions(that, actions, data);
     }
 }
 
@@ -267,8 +279,7 @@ export default {
             tileLayer: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
             mapid: "mapid",
             map: undefined,
-            timestamp: 0,
-            marker_objects: {}
+            timestamp: 0
         }
     },
     computed: {
@@ -293,7 +304,14 @@ export default {
                     return [];
                 }
             }
-        }
+        },
+        current_date: {
+            get() {
+                const date = new Date(store.state.current_timestamp * 1000);
+                const formattedDate = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+                return formattedDate;
+            }
+        },
     }
 };
 </script>

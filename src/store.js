@@ -14,9 +14,11 @@ state() {
         current_timestamp: 0,
         current_coordinate: [],
         current_key: "",
+        action_records: "",
+        marker_objects: {},
         markers_index: INIT.markers_index,
         markers_list_str: JSON.stringify([
-            {"timestamp":1722398722,"markers":{"a":{"coordinate":[23.116739550313700,113.30694794654846]},"b":{"coordinate":[23.116739550313700,113.30694794654846]}}},
+            {"timestamp":1722398722,"markers":{"a":{"coordinate":[23.116739550313700,113.30694794654846],"data": {"arrived": false}},"b":{"coordinate":[23.116739550313700,113.30694794654846],"data": {"arrived": false}}}},
             {"timestamp":1722398723,"markers":{"a":{"coordinate":[23.116748108745489,113.30694838446013]},"b":{"coordinate":[23.116748108745489,113.30694838446013]}}},
             {"timestamp":1722398724,"markers":{"a":{"coordinate":[23.116756667177278,113.30694882237180]},"b":{"coordinate":[23.116756667177278,113.30694882237180]}}},
             {"timestamp":1722398725,"markers":{"a":{"coordinate":[23.116765225609067,113.30694926028347]},"b":{"coordinate":[23.116765225609067,113.30694926028347]}}},
@@ -851,7 +853,7 @@ state() {
             {"timestamp":1722399554,"markers":{"a":{"coordinate":[23.121694741133084,113.30955608722295]},"b":{"coordinate":[23.122117691538143,113.30847691982277]}}},
             {"timestamp":1722399555,"markers":{"a":{"coordinate":[23.121702933498723,113.30955593957842]},"b":{"coordinate":[23.122127296137578,113.30847954496350]}}},
             {"timestamp":1722399556,"markers":{"a":{"coordinate":[23.121711125864362,113.30955579193389]},"b":{"coordinate":[23.122136900737013,113.30848217010423]}}},
-            {"timestamp":1722399557,"markers":{"a":{"coordinate":[23.121719318230001,113.30955564428936]},"b":{"coordinate":[23.122136900737065,113.30848217010497],"description":"<p>Arrive at the subway station.</>"}}},
+            {"timestamp":1722399557,"markers":{"a":{"coordinate":[23.121719318230001,113.30955564428936]},"b":{"coordinate":[23.122136900737065,113.30848217010497],"description":"<p>Arrive at the subway station.</>","data": {"arrived": true}}}},
             {"timestamp":1722399558,"markers":{"a":{"coordinate":[23.121727510595640,113.30955549664483]}}},
             {"timestamp":1722399559,"markers":{"a":{"coordinate":[23.121735702961279,113.30955534900030]}}},
             {"timestamp":1722399560,"markers":{"a":{"coordinate":[23.121743895326918,113.30955520135577]}}},
@@ -896,12 +898,13 @@ state() {
             {"timestamp":1722399599,"markers":{"a":{"coordinate":[23.122004834833317,113.30931076636689]}}},
             {"timestamp":1722399600,"markers":{"a":{"coordinate":[23.122011665837120,113.30930416400624]}}},
             {"timestamp":1722399601,"markers":{"a":{"coordinate":[23.122018496840923,113.30929756164559]}}},
-            {"timestamp":1722399602,"markers":{"a":{"coordinate":[23.122018496840923,113.30929756164551],"description":"<p>Arrive at the subway station.</>"}}}
+            {"timestamp":1722399602,"markers":{"a":{"coordinate":[23.122018496840923,113.30929756164551],"description":"<p>Arrive at the subway station.</>","data": {"arrived": true}}}}
             ]
             ),
         custom_hooks_str: JSON.stringify([
-            {"actions":["selected","interval_1000","zoom_17"],"conditions":[{"EQ": [true, "trun_round"]}]},
-            {"actions":["selected","speed_100","zoom_16"],"conditions":[{"EQ": [true, "go_straight"]}]}
+            {"actions":["selected","record","interval_1000","zoom_17"],"conditions":[{"EQ": [ "trun_round", true]}]},
+            {"actions":["no_selected","speed_100","zoom_16"],"conditions":[{"EQ": ["go_straight", true]}]},
+            {"actions":["alert"],"conditions":[{"CHANGED": ["arrived"]}]}
             ])
         };
     }

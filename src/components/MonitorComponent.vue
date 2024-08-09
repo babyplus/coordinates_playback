@@ -1,4 +1,10 @@
 <template>
+    <fwb-textarea :style="display"
+        v-model="$store.state.action_records"
+        :rows="10"
+        label=""
+        placeholder=""
+     />
     <fwb-list-group :style="display">
         <fwb-list-group-item>{{ $store.state.current_markers_index }}</fwb-list-group-item>
         <fwb-list-group-item>{{ current_date }}</fwb-list-group-item>
@@ -6,7 +12,7 @@
 </template>
 
 <script setup>
-import { FwbListGroup, FwbListGroupItem } from 'flowbite-vue'
+import { FwbListGroup, FwbListGroupItem, FwbTextarea } from 'flowbite-vue'
 import store from "@/store.js";
 </script>
 
@@ -22,9 +28,9 @@ export default {
         },
         display: {
             get(){
-                    return (0 == store.state.current_timestamp) ? "display: none" : "display: inline";
-                }
+                return (0 == store.state.current_timestamp) ? "display: none" : "display: inline";
             }
+        }
     }
 };
 </script>
